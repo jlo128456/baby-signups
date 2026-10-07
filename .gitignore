@@ -1,0 +1,7 @@
+node_modules/
+build/
+.DS_Store
+npm-debug.log*
+
+# Database password for production: never on GitHub
+config.php

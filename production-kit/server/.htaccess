@@ -1,0 +1,5 @@
+# Keep the settings file and helpers private; only the endpoint files can be visited.
+<FilesMatch "^(config\.php|config\.sample\.php|lib\.php)$">
+  Require all denied
+</FilesMatch>
+Options -Indexes

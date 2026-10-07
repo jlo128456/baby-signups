@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/baby-signups/static/css/main.e95c9efd.css",
+    "main.js": "/baby-signups/static/js/main.d4d698cf.js",
+    "index.html": "/baby-signups/index.html",
+    "main.e95c9efd.css.map": "/baby-signups/static/css/main.e95c9efd.css.map",
+    "main.d4d698cf.js.map": "/baby-signups/static/js/main.d4d698cf.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e95c9efd.css",
+    "static/js/main.d4d698cf.js"
+  ]
+}

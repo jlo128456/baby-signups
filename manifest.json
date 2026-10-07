@@ -1,0 +1,13 @@
+{
+  "name": "Due Date Sign-ups",
+  "short_name": "Sign-ups",
+  "description": "Register your baby's due date and product delivery date.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "theme_color": "#2E6A58",
+  "background_color": "#F2F5F3",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
