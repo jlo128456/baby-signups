@@ -296,3 +296,38 @@ header.compact h1 { font-size: clamp(24px, 6vw, 32px) }
 @media (prefers-reduced-motion: reduce) {
   .demo .chev { transition: none }
 }
+
+/* ---- Postal address with suggestions ---- */
+fieldset.address { border: 0; margin: 0; padding: 0; display: grid; gap: 12px; min-width: 0 }
+fieldset.address legend { padding: 0; margin-bottom: 2px; font-weight: 600; font-size: 14px }
+fieldset.address > .hint { margin-top: -6px }
+.addr-search { position: relative }
+.addr-row { display: grid; grid-template-columns: 1fr 110px 110px; gap: 12px }
+.addr-list {
+  position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 15;
+  list-style: none; margin: 0; padding: 6px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 30px rgba(30, 42, 38, .14);
+  max-height: 320px; overflow-y: auto;
+}
+.addr-list li[role="option"] {
+  display: grid; gap: 1px; padding: 10px 12px; min-height: 48px; border-radius: 8px; cursor: pointer;
+}
+.addr-list li[role="option"] b { font-weight: 600 }
+.addr-list li[role="option"] span { font-size: 13px; color: var(--muted) }
+.addr-list li[role="option"]:hover, .addr-list li.active { background: var(--soft) }
+.addr-foot { padding: 8px 12px 4px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 4px }
+.addr-spinner {
+  position: absolute; right: 14px; bottom: 15px; width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--line); border-top-color: var(--accent); animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg) } }
+@media (prefers-reduced-motion: reduce) { .addr-spinner { animation-duration: 2s } }
+
+/* Address on the team desk */
+.postal { display: grid; gap: 2px; justify-items: start }
+.postal .btn { margin-top: 8px }
+
+@media (max-width: 600px) {
+  .addr-row { grid-template-columns: 1fr 1fr }
+  .addr-suburb { grid-column: 1 / -1 }
+}

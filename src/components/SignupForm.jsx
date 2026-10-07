@@ -2,11 +2,16 @@ import { useState } from "react";
 import { api, newId } from "../services/api";
 import { bumpNote, fmtDate } from "../lib/dates";
 import { useToast } from "../lib/toast";
+import { AddressField } from "./AddressField";
 
 const blank = {
   name: "",
   email: "",
   phone: "",
+  address_line1: "",
+  address_line2: "",
+  suburb: "",
+  state: "",
   postcode: "",
   baby_due: "",
   delivery_date: "",
@@ -39,6 +44,8 @@ export function SignupForm({ packages, isStaff, onSaved }) {
     const miss = [];
     if (!v.name.trim()) miss.push("your name");
     if (!/^\S+@\S+\.\S+$/.test(v.email.trim())) miss.push("a valid email address");
+    if (!v.address_line1.trim() || !v.suburb.trim() || !v.state || !/^\d{4}$/.test(v.postcode))
+      miss.push("your full postal address (street, suburb, state and 4-digit postcode)");
     if (!v.baby_due) miss.push("the baby's due date");
     if (!v.delivery_date) miss.push("a delivery date");
     if (!v.consent) miss.push("your OK for us to contact you");
@@ -53,6 +60,10 @@ export function SignupForm({ packages, isStaff, onSaved }) {
       name: v.name.trim(),
       email: v.email.trim(),
       phone: v.phone.trim(),
+      address_line1: v.address_line1.trim(),
+      address_line2: v.address_line2.trim(),
+      suburb: v.suburb.trim(),
+      state: v.state,
       postcode: v.postcode.trim(),
       baby_due: v.baby_due,
       delivery_date: v.delivery_date,
@@ -142,13 +153,8 @@ export function SignupForm({ packages, isStaff, onSaved }) {
           </label>
           <input id="f-phone" type="tel" autoComplete="tel" placeholder="04xx xxx xxx" value={v.phone} onChange={(e) => set("phone", e.target.value)} />
         </div>
-        <div className="field">
-          <label htmlFor="f-post">
-            Postcode <span className="muted">(optional)</span>
-          </label>
-          <input id="f-post" inputMode="numeric" autoComplete="postal-code" placeholder="4000" value={v.postcode} onChange={(e) => set("postcode", e.target.value)} />
-        </div>
       </div>
+      <AddressField value={v} onChange={(patch) => setV((p) => ({ ...p, ...patch }))} />
       <div className="row">
         <div className="field">
           <label htmlFor="f-due">Baby's expected due date</label>

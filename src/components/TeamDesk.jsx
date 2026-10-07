@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { daysBetween, parseDate, today } from "../lib/dates";
 
 import { LeadCard } from "./LeadCard";
+import { addressShort } from "../lib/address";
 
 export function TeamDesk({ leads, upsells, packages, settings, loading, error, onChanged }) {
   const [q, setQ] = useState("");
@@ -31,7 +32,7 @@ export function TeamDesk({ leads, upsells, packages, settings, loading, error, o
 
   const list = useMemo(() => {
     const s = q.trim().toLowerCase();
-    let r = leads.filter((l) => !s || l.name.toLowerCase().includes(s) || l.email.toLowerCase().includes(s));
+    let r = leads.filter((l) => !s || [l.name, l.email, addressShort(l)].some((x) => (x || "").toLowerCase().includes(s)));
     if (filter === "new") r = r.filter((l) => l.status === "new");
     if (filter === "topost") r = r.filter((l) => (byLead.get(l.id) || []).some((u) => u.status !== "posted"));
     if (filter === "sub") r = r.filter((l) => l.subscribe || l.status === "subscribed");
@@ -66,7 +67,7 @@ export function TeamDesk({ leads, upsells, packages, settings, loading, error, o
         <input
           id="q"
           type="search"
-          placeholder="Search name or email"
+          placeholder="Search name, email, suburb or postcode"
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />

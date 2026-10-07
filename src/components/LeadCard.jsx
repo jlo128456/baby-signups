@@ -3,6 +3,7 @@ import { api } from "../services/api";
 import { STATUS, TEAM } from "../lib/constants";
 import { fmtDate, fmtDateTime, fmtShort, weeksAlong } from "../lib/dates";
 import { useToast } from "../lib/toast";
+import { addressLines, postalLabel } from "../lib/address";
 
 function summary(l, pkg) {
   return [
@@ -10,7 +11,7 @@ function summary(l, pkg) {
     "",
     `Email: ${l.email}`,
     `Phone: ${l.phone || "—"}`,
-    `Postcode: ${l.postcode || "—"}`,
+    `Postal address: ${addressLines(l).join(", ") || "—"}`,
     `Baby due: ${fmtDate(l.baby_due)}`,
     `Deliver products by: ${fmtDate(l.delivery_date)}`,
     `Package: ${pkg ? pkg.name : "Not chosen"}${l.subscribe ? " (wants a subscription)" : ""}`,
@@ -63,6 +64,15 @@ export function LeadCard({ lead: l, upsells, pkg, settings, open, onToggle, onCh
     if (!(await run(api.updateLead(l.id, { status: next }), "Status updated"))) setStatus(before);
   }
 
+  async function copyLabel() {
+    try {
+      await navigator.clipboard.writeText(postalLabel(l));
+      toast("Postage label copied");
+    } catch {
+      toast("Copy isn't available here. Select the address instead");
+    }
+  }
+
   async function copy() {
     try {
       await navigator.clipboard.writeText(summary(l, pkg));
@@ -110,8 +120,21 @@ export function LeadCard({ lead: l, upsells, pkg, settings, open, onToggle, onCh
             <dd>{l.email}</dd>
             <dt>Phone</dt>
             <dd>{l.phone || "—"}</dd>
-            <dt>Postcode</dt>
-            <dd>{l.postcode || "—"}</dd>
+            <dt>Postal address</dt>
+            <dd>
+              {addressLines(l).length ? (
+                <span className="postal">
+                  {addressLines(l).map((line) => (
+                    <span key={line}>{line}</span>
+                  ))}
+                  <button className="btn ghost small" type="button" onClick={copyLabel}>
+                    Copy postage label
+                  </button>
+                </span>
+              ) : (
+                "—"
+              )}
+            </dd>
             <dt>Notes</dt>
             <dd>{l.notes || "—"}</dd>
             <dt>Signed up</dt>
