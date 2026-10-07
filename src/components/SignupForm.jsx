@@ -3,6 +3,7 @@ import { api, newId } from "../services/api";
 import { bumpNote, fmtDate } from "../lib/dates";
 import { useToast } from "../lib/toast";
 import { AddressField } from "./AddressField";
+import { FormSection } from "./FormSection";
 
 const blank = {
   name: "",
@@ -129,49 +130,51 @@ export function SignupForm({ packages, isStaff, onSaved }) {
   const shown = packages.filter((p) => p.active && p.name);
 
   return (
-    <form onSubmit={onSubmit} noValidate>
+    <form className="signup" onSubmit={onSubmit} noValidate>
       {isStaff && (
         <div className="notice">
           You're signed in as team, so this form adds a new enquiry each time you submit (for example, details taken
           over the phone or at an event).
         </div>
       )}
-      <div className="row">
+      <FormSection step={1} title="About you">
         <div className="field">
           <label htmlFor="f-name">Full name</label>
           <input id="f-name" autoComplete="name" placeholder="e.g. Sarah Nguyen" value={v.name} onChange={(e) => set("name", e.target.value)} />
         </div>
-        <div className="field">
-          <label htmlFor="f-email">Email address</label>
-          <input id="f-email" type="email" autoComplete="email" placeholder="you@example.com" value={v.email} onChange={(e) => set("email", e.target.value)} />
+        <div className="row">
+          <div className="field">
+            <label htmlFor="f-email">Email address</label>
+            <input id="f-email" type="email" autoComplete="email" placeholder="you@example.com" value={v.email} onChange={(e) => set("email", e.target.value)} />
+          </div>
+          <div className="field">
+            <label htmlFor="f-phone">
+              Phone <span className="muted">(optional)</span>
+            </label>
+            <input id="f-phone" type="tel" autoComplete="tel" placeholder="04xx xxx xxx" value={v.phone} onChange={(e) => set("phone", e.target.value)} />
+          </div>
         </div>
-      </div>
-      <div className="row">
-        <div className="field">
-          <label htmlFor="f-phone">
-            Phone <span className="muted">(optional)</span>
-          </label>
-          <input id="f-phone" type="tel" autoComplete="tel" placeholder="04xx xxx xxx" value={v.phone} onChange={(e) => set("phone", e.target.value)} />
-        </div>
-      </div>
-      <AddressField value={v} onChange={(patch) => setV((p) => ({ ...p, ...patch }))} />
-      <div className="row">
-        <div className="field">
-          <label htmlFor="f-due">Baby's expected due date</label>
-          <input id="f-due" type="date" value={v.baby_due} onChange={(e) => set("baby_due", e.target.value)} />
-        </div>
-        <div className="field">
-          <label htmlFor="f-deliv">When you'd like your products delivered</label>
-          <input id="f-deliv" type="date" value={v.delivery_date} onChange={(e) => set("delivery_date", e.target.value)} />
-          <span className="hint">Most families choose 4–6 weeks before the due date.</span>
-        </div>
-      </div>
-      {note && <div className="bump">{note}</div>}
+      </FormSection>
 
-      <div className="field">
-        <span className="lab">
-          Choose a package <span className="muted">(optional)</span>
-        </span>
+      <FormSection step={2} title="Postal address" hint="Where we'll post your products. Start typing and pick your address from the list.">
+        <AddressField value={v} onChange={(patch) => setV((p) => ({ ...p, ...patch }))} />
+      </FormSection>
+
+      <FormSection step={3} title="Key dates">
+        <div className="row">
+          <div className="field">
+            <label htmlFor="f-due">Baby's due date</label>
+            <input id="f-due" type="date" value={v.baby_due} onChange={(e) => set("baby_due", e.target.value)} />
+          </div>
+          <div className="field">
+            <label htmlFor="f-deliv">Deliver my products by</label>
+            <input id="f-deliv" type="date" value={v.delivery_date} onChange={(e) => set("delivery_date", e.target.value)} />
+          </div>
+        </div>
+        {note ? <div className="bump">{note}</div> : <p className="hint">Most families choose delivery 4–6 weeks before the due date.</p>}
+      </FormSection>
+
+      <FormSection step={4} title="Choose a package" hint="Optional. Not sure? We'll talk you through it.">
         <div className="pkgs">
           {shown.length === 0 ? (
             <div className="empty">Packages will appear here once our team has added them.</div>
@@ -203,24 +206,26 @@ export function SignupForm({ packages, isStaff, onSaved }) {
             </>
           )}
         </div>
-      </div>
-
-      <label className="check" htmlFor="f-sub">
-        <input type="checkbox" id="f-sub" checked={v.subscribe} onChange={(e) => set("subscribe", e.target.checked)} />
-        <span>
-          I'd like to <b>subscribe</b> to this package so it arrives on a regular schedule.
-        </span>
-      </label>
-      <div className="field">
-        <label htmlFor="f-notes">
-          Anything else we should know? <span className="muted">(optional)</span>
+        <label className="check" htmlFor="f-sub">
+          <input type="checkbox" id="f-sub" checked={v.subscribe} onChange={(e) => set("subscribe", e.target.checked)} />
+          <span>
+            I'd like to <b>subscribe</b> so it arrives on a regular schedule.
+          </span>
         </label>
-        <textarea id="f-notes" placeholder="Twins, first baby, gift for someone else…" value={v.notes} onChange={(e) => set("notes", e.target.value)} />
-      </div>
-      <label className="check" htmlFor="f-consent">
-        <input type="checkbox" id="f-consent" checked={v.consent} onChange={(e) => set("consent", e.target.checked)} />
-        <span>I'm happy for the team to contact me by email or phone about my order.</span>
-      </label>
+      </FormSection>
+
+      <FormSection step={5} title="Anything else?">
+        <div className="field">
+          <label htmlFor="f-notes">
+            Notes for our team <span className="muted">(optional)</span>
+          </label>
+          <textarea id="f-notes" placeholder="Twins, first baby, gift for someone else…" value={v.notes} onChange={(e) => set("notes", e.target.value)} />
+        </div>
+        <label className="check" htmlFor="f-consent">
+          <input type="checkbox" id="f-consent" checked={v.consent} onChange={(e) => set("consent", e.target.checked)} />
+          <span>I'm happy for the team to contact me by email or phone about my order.</span>
+        </label>
+      </FormSection>
 
       {/* Spam trap: hidden from people, but bots fill it in. */}
       <div className="hp" aria-hidden="true">

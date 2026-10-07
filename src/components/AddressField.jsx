@@ -28,6 +28,7 @@ export function AddressField({ value, onChange }) {
     if (text.trim().length < 4) {
       setItems([]);
       setOpen(false);
+      setSearching(false);
       return undefined;
     }
     const ctrl = new AbortController();
@@ -44,6 +45,7 @@ export function AddressField({ value, onChange }) {
     return () => {
       clearTimeout(t);
       ctrl.abort();
+      setSearching(false); // a newer keystroke takes over; never leave the spinner stuck
     };
   }, [value.address_line1]);
 
@@ -86,29 +88,34 @@ export function AddressField({ value, onChange }) {
 
   return (
     <fieldset className="address">
-      <legend className="lab">Postal address</legend>
-      <p className="hint">Where we'll post your products. Start typing and pick your address from the list.</p>
+      <legend className="sr-only">Postal address</legend>
 
       <div className="field addr-search" ref={boxRef}>
         <label htmlFor="f-addr1">Street address</label>
-        <input
-          id="f-addr1"
-          role="combobox"
-          aria-expanded={open}
-          aria-controls={listId}
-          aria-autocomplete="list"
-          aria-activedescendant={active >= 0 ? `${listId}-${active}` : undefined}
-          autoComplete="address-line1"
-          placeholder="e.g. 12 Queen Street"
-          value={value.address_line1}
-          onChange={(e) => {
-            typed.current = true;
-            onChange({ address_line1: e.target.value });
-          }}
-          onKeyDown={onKeyDown}
-          onFocus={() => items.length && setOpen(true)}
-        />
-        {searching && <span className="addr-spinner" aria-hidden="true" />}
+        <div className="addr-input">
+          <svg className="addr-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="M16 16l4 4" />
+          </svg>
+          <input
+            id="f-addr1"
+            role="combobox"
+            aria-expanded={open}
+            aria-controls={listId}
+            aria-autocomplete="list"
+            aria-activedescendant={active >= 0 ? `${listId}-${active}` : undefined}
+            autoComplete="address-line1"
+            placeholder="e.g. 12 Queen Street"
+            value={value.address_line1}
+            onChange={(e) => {
+              typed.current = true;
+              onChange({ address_line1: e.target.value });
+            }}
+            onKeyDown={onKeyDown}
+            onFocus={() => items.length && setOpen(true)}
+          />
+          {searching && <span className="addr-spinner" aria-hidden="true" />}
+        </div>
         {open && (
           <ul className="addr-list" id={listId} role="listbox" aria-label="Matching addresses">
             {items.map((a, i) => (
@@ -124,7 +131,11 @@ export function AddressField({ value, onChange }) {
                 }}
               >
                 <b>{a.line1 || a.suburb}</b>
-                <span>{[a.line1 ? a.suburb : "", [a.state, a.postcode].filter(Boolean).join(" ")].filter(Boolean).join(", ")}</span>
+                <span>
+                  {[a.line1 ? a.suburb : "", [a.state, a.postcode].filter(Boolean).join(" ")]
+                    .filter(Boolean)
+                    .join(", ")}
+                </span>
               </li>
             ))}
             <li className="addr-foot" aria-hidden="true">
@@ -138,17 +149,33 @@ export function AddressField({ value, onChange }) {
         <label htmlFor="f-addr2">
           Unit, building or PO Box <span className="muted">(optional)</span>
         </label>
-        <input id="f-addr2" autoComplete="address-line2" placeholder="e.g. Unit 4" value={value.address_line2} onChange={(e) => onChange({ address_line2: e.target.value })} />
+        <input
+          id="f-addr2"
+          autoComplete="address-line2"
+          placeholder="e.g. Unit 4"
+          value={value.address_line2}
+          onChange={(e) => onChange({ address_line2: e.target.value })}
+        />
       </div>
 
       <div className="addr-row">
         <div className="field addr-suburb">
           <label htmlFor="f-suburb">Suburb</label>
-          <input id="f-suburb" autoComplete="address-level2" value={value.suburb} onChange={(e) => onChange({ suburb: e.target.value })} />
+          <input
+            id="f-suburb"
+            autoComplete="address-level2"
+            value={value.suburb}
+            onChange={(e) => onChange({ suburb: e.target.value })}
+          />
         </div>
         <div className="field">
           <label htmlFor="f-state">State</label>
-          <select id="f-state" autoComplete="address-level1" value={value.state} onChange={(e) => onChange({ state: e.target.value })}>
+          <select
+            id="f-state"
+            autoComplete="address-level1"
+            value={value.state}
+            onChange={(e) => onChange({ state: e.target.value })}
+          >
             <option value="">Choose</option>
             {STATES.map(([code]) => (
               <option key={code} value={code}>
