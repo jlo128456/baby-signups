@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/baby-signups/static/css/main.37e3b48d.css",
-    "main.js": "/baby-signups/static/js/main.5e09465b.js",
+    "main.css": "/baby-signups/static/css/main.e4cbbfe7.css",
+    "main.js": "/baby-signups/static/js/main.f527f5f4.js",
     "index.html": "/baby-signups/index.html",
-    "main.37e3b48d.css.map": "/baby-signups/static/css/main.37e3b48d.css.map",
-    "main.5e09465b.js.map": "/baby-signups/static/js/main.5e09465b.js.map"
+    "main.e4cbbfe7.css.map": "/baby-signups/static/css/main.e4cbbfe7.css.map",
+    "main.f527f5f4.js.map": "/baby-signups/static/js/main.f527f5f4.js.map"
   },
   "entrypoints": [
-    "static/css/main.37e3b48d.css",
-    "static/js/main.5e09465b.js"
+    "static/css/main.e4cbbfe7.css",
+    "static/js/main.f527f5f4.js"
   ]
 }
