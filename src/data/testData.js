@@ -121,7 +121,7 @@ export function makeTestData() {
         updated_at: hoursAgo(50),
         name: "Example: Mia Robertson",
         email: "mia@example.com",
-        phone: "",
+        phone: "0400 777 888",
         address_line1: "15 Scarborough Street",
         address_line2: "",
         suburb: "Southport",

@@ -18,7 +18,7 @@
 import { makeTestData } from "../data/testData";
 
 const PREFIX = "dds-demo:";
-const VERSION = 2; // bump to replace everyone's saved demo data with fresh test data
+const VERSION = 3; // bump to replace everyone's saved demo data with fresh test data
 const TABLES = ["leads", "upsells", "packages", "settings", "staff", "session", "meta"];
 
 // Copy kept in memory, so the demo still works if the browser blocks storage (e.g. some private windows).

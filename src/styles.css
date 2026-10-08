@@ -367,3 +367,7 @@ form.signup > .submitbar { margin-top: 8px }
 /* Packages: one clear list, price on the right */
 .pkgs { grid-template-columns: 1fr !important }
 .pkgs .pkg:first-child { grid-column: auto !important }
+
+/* Field error message (e.g. phone number) */
+.field-error { font-size: 13px; color: var(--danger) }
+input[aria-invalid="true"] { border-color: var(--danger) }

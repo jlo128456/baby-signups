@@ -4,6 +4,7 @@ import { bumpNote, fmtDate } from "../lib/dates";
 import { useToast } from "../lib/toast";
 import { AddressField } from "./AddressField";
 import { FormSection } from "./FormSection";
+import { formatAuPhone, isValidAuPhone } from "../lib/phone";
 
 const blank = {
   name: "",
@@ -35,6 +36,7 @@ export function SignupForm({ packages, isStaff, onSaved }) {
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(null);
+  const [phoneTouched, setPhoneTouched] = useState(false);
 
   const set = (k, val) => setV((p) => ({ ...p, [k]: val }));
   const note = bumpNote(v.baby_due, v.delivery_date);
@@ -45,6 +47,7 @@ export function SignupForm({ packages, isStaff, onSaved }) {
     const miss = [];
     if (!v.name.trim()) miss.push("your name");
     if (!/^\S+@\S+\.\S+$/.test(v.email.trim())) miss.push("a valid email address");
+    if (!isValidAuPhone(v.phone)) miss.push("a phone number we can call (e.g. 0412 345 678)");
     if (!v.address_line1.trim() || !v.suburb.trim() || !v.state || !/^\d{4}$/.test(v.postcode))
       miss.push("your full postal address (street, suburb, state and 4-digit postcode)");
     if (!v.baby_due) miss.push("the baby's due date");
@@ -60,7 +63,7 @@ export function SignupForm({ packages, isStaff, onSaved }) {
       id: newId(),
       name: v.name.trim(),
       email: v.email.trim(),
-      phone: v.phone.trim(),
+      phone: formatAuPhone(v.phone),
       address_line1: v.address_line1.trim(),
       address_line2: v.address_line2.trim(),
       suburb: v.suburb.trim(),
@@ -88,6 +91,7 @@ export function SignupForm({ packages, isStaff, onSaved }) {
     if (isStaff) {
       toast("Enquiry added");
       setV(blank);
+      setPhoneTouched(false);
     } else {
       setDone({ lead: v });
     }
@@ -118,6 +122,7 @@ export function SignupForm({ packages, isStaff, onSaved }) {
             onClick={() => {
               setDone(null);
               setV(blank);
+      setPhoneTouched(false);
             }}
           >
             Start a new sign-up
@@ -148,10 +153,27 @@ export function SignupForm({ packages, isStaff, onSaved }) {
             <input id="f-email" type="email" autoComplete="email" placeholder="you@example.com" value={v.email} onChange={(e) => set("email", e.target.value)} />
           </div>
           <div className="field">
-            <label htmlFor="f-phone">
-              Phone <span className="muted">(optional)</span>
-            </label>
-            <input id="f-phone" type="tel" autoComplete="tel" placeholder="04xx xxx xxx" value={v.phone} onChange={(e) => set("phone", e.target.value)} />
+            <label htmlFor="f-phone">Phone</label>
+            <input
+              id="f-phone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="0412 345 678"
+              required
+              aria-invalid={phoneTouched && !isValidAuPhone(v.phone) ? "true" : undefined}
+              value={v.phone}
+              onChange={(e) => set("phone", e.target.value)}
+              onBlur={() => {
+                setPhoneTouched(true);
+                if (isValidAuPhone(v.phone)) set("phone", formatAuPhone(v.phone));
+              }}
+            />
+            {phoneTouched && v.phone && !isValidAuPhone(v.phone) ? (
+              <span className="field-error">Enter an Australian mobile or landline, e.g. 0412 345 678 or (07) 3123 4567.</span>
+            ) : (
+              <span className="hint">So our team can call you about your order.</span>
+            )}
           </div>
         </div>
       </FormSection>
